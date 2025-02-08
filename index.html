@@ -41,7 +41,6 @@
             margin: 10px 0;
         }
         .question-container {
-            display: none;
             margin: 20px 0;
         }
         .mood-btn {
@@ -51,6 +50,7 @@
             border: 2px solid #ddd;
             border-radius: 15px;
             cursor: pointer;
+            color: #333;
         }
         .mood-btn:hover {
             background-color: #e0e0e0;
@@ -67,91 +67,471 @@
             border: 2px solid #ddd;
             border-radius: 8px;
         }
+        .button-container {
+            display: flex;
+            justify-content: center;
+            gap: 10px;  /* 버튼 사이 간격 */
+            margin: 20px 0;
+        }
     </style>
 </head>
 <body>
-    <h1>오늘의 점심 메뉴 추천</h1>
+    <h1>오늘의 야식 메뉴 추천</h1>
     <div class="result-container">
-        <div class="emoji" id="emoji">🍽️</div>
-        <div id="result">당신을 위한 완벽한 점심 메뉴를 추천해드립니다!</div>
+        <div class="emoji" id="emoji">🌙</div>
+        <div id="result">당신을 위한 완벽한 야식 메뉴를 추천해드립니다!</div>
         
         <div id="questionContainer" class="question-container">
-            <h3>오늘 기분이 어떠신가요?</h3>
+            <h3>지금 기분이 어떠신가요?</h3>
             <div id="moodButtons">
-                <button class="mood-btn" onclick="selectMood('happy')">신나요! 😊</button>
-                <button class="mood-btn" onclick="selectMood('tired')">피곤해요 😫</button>
-                <button class="mood-btn" onclick="selectMood('stressed')">스트레스 받아요 😤</button>
+                <button class="mood-btn" onclick="selectMood('happy')">신나요! 🤩</button>
+                <button class="mood-btn" onclick="selectMood('tired')">피곤해요 😪</button>
+                <button class="mood-btn" onclick="selectMood('stressed')">스트레스 받아요 😫</button>
+                <button class="mood-btn" onclick="selectMood('hungry')">배고파요 🤤</button>
             </div>
-            
-            <h3>얼마나 배고프신가요?</h3>
-            <div id="hungerButtons">
-                <button class="mood-btn" onclick="selectHunger('light')">살짝 배고파요 🥄</button>
-                <button class="mood-btn" onclick="selectHunger('medium')">배고파요 🍚</button>
-                <button class="mood-btn" onclick="selectHunger('very')">엄청 배고파요 🍖</button>
+
+            <h3>어떤 맛이 땡기시나요?</h3>
+            <div id="lastFoodButtons">
+                <button class="mood-btn" onclick="selectLastFood('spicy')">매운맛 🌶️</button>
+                <button class="mood-btn" onclick="selectLastFood('sweet')">달달한맛 🍯</button>
+                <button class="mood-btn" onclick="selectLastFood('salty')">짭짤한맛 🧂</button>
+                <button class="mood-btn" onclick="selectLastFood('fresh')">담백한맛 🥗</button>
             </div>
-            
-            <button onclick="getRecommendation()">추천 받기</button>
+
+            <h3>야식 예산은 어느 정도인가요?</h3>
+            <div id="budgetButtons">
+                <button class="mood-btn" onclick="selectBudget('low')">1만원 이하 💰</button>
+                <button class="mood-btn" onclick="selectBudget('medium')">3만원 이하 💰💰</button>
+                <button class="mood-btn" onclick="selectBudget('high')">3만원 이상 💰💰💰</button>
+            </div>
+
+            <h3>누구와 함께 드시나요?</h3>
+            <div id="withButtons">
+                <button class="mood-btn" onclick="selectWith('alone')">혼자서 🧑</button>
+                <button class="mood-btn" onclick="selectWith('friend')">친구와 👥</button>
+                <button class="mood-btn" onclick="selectWith('family')">가족과 👨‍👩‍👧‍👦</button>
+                <button class="mood-btn" onclick="selectWith('lover')">애인과 💑</button>
+            </div>
         </div>
 
-        <button onclick="startRecommendation()">새로운 추천 받기</button>
-        <button onclick="shareOnTwitter()">X에서 공유하기</button>
+        <div class="button-container">
+            <button onclick="getRecommendation()">추천 받기</button>
+            <button onclick="shareOnTwitter()">X에서 공유하기</button>
+        </div>
     </div>
 
     <script>
         const foods = {
             happy: {
-                light: [
-                    { menu: "샐러드", emoji: "🥗", reason: "가벼운 식사로 기분 좋은 하루 보내세요!" },
-                    { menu: "샌드위치", emoji: "🥪", reason: "간단하지만 맛있게!" }
-                ],
-                medium: [
-                    { menu: "파스타", emoji: "🍝", reason: "신나는 분위기에 어울리는 파스타!" },
-                    { menu: "초밥", emoji: "🍣", reason: "기분 좋은 날엔 특별한 음식으로!" }
-                ],
-                very: [
-                    { menu: "스테이크", emoji: "🥩", reason: "행복한 날 풍성한 식사 어떠세요?" },
-                    { menu: "피자", emoji: "🍕", reason: "신나는 날 피자파티!" }
-                ]
+                spicy: {
+                    low: {
+                        alone: { menu: "매운치킨", emoji: "🍗", reason: "신나는 밤엔 매운 치킨이 최고!" },
+                        friend: { menu: "떡볶이", emoji: "🥘", reason: "즐거운 밤엔 매콤달콤 떡볶이!" },
+                        family: { menu: "마라탕", emoji: "🥘", reason: "신나는 밤 매콤하게!" }
+                    },
+                    sweet: {
+                        low: {
+                            alone: { menu: "허니콤보", emoji: "🍗", reason: "달달한 치킨으로 행복한 밤을!" },
+                            friend: { menu: "피자", emoji: "🍕", reason: "달콤한 피자로 즐거운 밤을!" },
+                            family: { menu: "허니브레드", emoji: "🍞", reason: "달콤한 간식으로 기분 전환!" }
+                        },
+                        sweet: {
+                            low: {
+                                alone: { menu: "치즈볼", emoji: "🧀", reason: "짭짤한 치즈볼로 신나게!" },
+                                friend: { menu: "감자튀김", emoji: "🍟", reason: "바삭하고 짭짤한 감자튀김!" },
+                                family: { menu: "후라이드치킨", emoji: "🍗", reason: "바삭바삭한 치킨으로 신나게!" }
+                            },
+                            salty: {
+                                low: {
+                                    alone: { menu: "치즈볼", emoji: "🧀", reason: "짭짤한 치즈볼로 신나게!" },
+                                    friend: { menu: "감자튀김", emoji: "🍟", reason: "바삭하고 짭짤한 감자튀김!" },
+                                    family: { menu: "후라이드치킨", emoji: "🍗", reason: "바삭바삭한 치킨으로 신나게!" }
+                                },
+                                medium: {
+                                    alone: { menu: "치즈볼", emoji: "🧀", reason: "짭짤한 치즈볼로 신나게!" },
+                                    friend: { menu: "감자튀김", emoji: "🍟", reason: "바삭하고 짭짤한 감자튀김!" },
+                                    family: { menu: "후라이드치킨", emoji: "🍗", reason: "바삭바삭한 치킨으로 신나게!" }
+                                },
+                                high: {
+                                    alone: { menu: "치즈볼", emoji: "🧀", reason: "짭짤한 치즈볼로 신나게!" },
+                                    friend: { menu: "감자튀김", emoji: "🍟", reason: "바삭하고 짭짤한 감자튀김!" },
+                                    family: { menu: "후라이드치킨", emoji: "🍗", reason: "바삭바삭한 치킨으로 신나게!" }
+                                }
+                            },
+                            fresh: {
+                                low: {
+                                    alone: { menu: "샐러드", emoji: "🥗", reason: "가볍고 상큼하게 즐기는 야식!" },
+                                    friend: { menu: "월남쌈", emoji: "🥬", reason: "신선한 야채로 즐거운 밤을!" },
+                                    family: { menu: "과일", emoji: "🍎", reason: "상큼한 과일로 기분 전환!" }
+                                },
+                                medium: {
+                                    alone: { menu: "월남쌈", emoji: "🥬", reason: "신선한 야채로 즐거운 밤을!" },
+                                    friend: { menu: "두부김치", emoji: "🥗", reason: "담백하게 배고픔 달래기!" },
+                                    family: { menu: "샐러드", emoji: "🥗", reason: "가볍게 즐기는 야식!" },
+                                    lover: { menu: "샐러드", emoji: "🥗", reason: "가볍게 즐기는 야식!" }
+                                },
+                                high: {
+                                    alone: { menu: "월남쌈", emoji: "🥬", reason: "신선한 야채로 즐거운 밤을!" },
+                                    friend: { menu: "두부김치", emoji: "🥗", reason: "담백하게 배고픔 달래기!" },
+                                    family: { menu: "샐러드", emoji: "🥗", reason: "가볍게 즐기는 야식!" },
+                                    lover: { menu: "샐러드", emoji: "🥗", reason: "가볍게 즐기는 야식!" }
+                                }
+                            }
+                        },
+                        salty: {
+                            low: {
+                                alone: { menu: "마라탕", emoji: "🥘", reason: "신나는 밤 매콤하게!" },
+                                friend: { menu: "부대찌개", emoji: "🍲", reason: "든든한 부대찌개로 피로 회복!" },
+                                family: { menu: "쭈꾸미볶음", emoji: "🦑", reason: "연인과 함께 매콤하게!" }
+                            },
+                            medium: {
+                                alone: { menu: "짬뽕", emoji: "🍜", reason: "혼자 즐기는 얼큰한 국물!" },
+                                friend: { menu: "닭갈비", emoji: "🍗", reason: "친구와 함께 매콤하게!" },
+                                family: { menu: "낙곱새", emoji: "🦐", reason: "가족과 함께 얼큰하게!" },
+                                lover: { menu: "매운탕", emoji: "🐟", reason: "연인과 함께 얼큰하게!" }
+                            },
+                            high: {
+                                alone: { menu: "매운갈비찜", emoji: "🍖", reason: "혼자서 즐기는 매운 보양식!" },
+                                friend: { menu: "킹크랩찜", emoji: "🦀", reason: "친구와 함께 호화롭게!" },
+                                family: { menu: "매운갈비구이", emoji: "🥩", reason: "가족과 함께 든든하게!" },
+                                lover: { menu: "매운랍스터", emoji: "🦞", reason: "특별한 날 특별하게!" }
+                            }
+                        },
+                        fresh: {
+                            low: {
+                                alone: { menu: "컵라면", emoji: "🍜", reason: "혼자서 즐기는 매콤한 야식!" },
+                                friend: { menu: "김밥", emoji: "🍙", reason: "든든한 김밥로 피로 회복!" },
+                                family: { menu: "부대찌개", emoji: "🍲", reason: "가족과 함께 얼큰하게!" },
+                                lover: { menu: "쭈꾸미볶음", emoji: "🦑", reason: "연인과 함께 매콤하게!" }
+                            },
+                            medium: {
+                                alone: { menu: "짬뽕", emoji: "🍜", reason: "혼자 즐기는 얼큰한 국물!" },
+                                friend: { menu: "닭갈비", emoji: "🍗", reason: "친구와 함께 매콤하게!" },
+                                family: { menu: "낙곱새", emoji: "🦐", reason: "가족과 함께 얼큰하게!" },
+                                lover: { menu: "매운탕", emoji: "🐟", reason: "연인과 함께 얼큰하게!" }
+                            },
+                            high: {
+                                alone: { menu: "매운양갈비", emoji: "🥩", reason: "혼자만의 매운 호사!" },
+                                friend: { menu: "매운대게찜", emoji: "🦀", reason: "친구와 함께 호화로운 매운맛!" },
+                                family: { menu: "매운킹크랩", emoji: "🦞", reason: "가족과 함께 고급진 매운맛!" },
+                                lover: { menu: "매운생선찜", emoji: "🐟", reason: "연인과 함께 고급스럽게!" }
+                            }
+                        }
+                    }
+                },
+                sweet: {
+                    low: {
+                        alone: { menu: "허니콤보", emoji: "🍗", reason: "달달한 치킨으로 행복한 밤을!" },
+                        friend: { menu: "피자", emoji: "🍕", reason: "달콤한 피자로 즐거운 밤을!" },
+                        family: { menu: "허니브레드", emoji: "🍞", reason: "달콤한 간식으로 기분 전환!" }
+                    },
+                    sweet: {
+                        low: {
+                            alone: { menu: "치즈볼", emoji: "🧀", reason: "짭짤한 치즈볼로 신나게!" },
+                            friend: { menu: "감자튀김", emoji: "🍟", reason: "바삭하고 짭짤한 감자튀김!" },
+                            family: { menu: "후라이드치킨", emoji: "🍗", reason: "바삭바삭한 치킨으로 신나게!" }
+                        },
+                        salty: {
+                            low: {
+                                alone: { menu: "치즈볼", emoji: "🧀", reason: "짭짤한 치즈볼로 신나게!" },
+                                friend: { menu: "감자튀김", emoji: "🍟", reason: "바삭하고 짭짤한 감자튀김!" },
+                                family: { menu: "후라이드치킨", emoji: "🍗", reason: "바삭바삭한 치킨으로 신나게!" }
+                            },
+                            medium: {
+                                alone: { menu: "치즈볼", emoji: "🧀", reason: "짭짤한 치즈볼로 신나게!" },
+                                friend: { menu: "감자튀김", emoji: "🍟", reason: "바삭하고 짭짤한 감자튀김!" },
+                                family: { menu: "후라이드치킨", emoji: "🍗", reason: "바삭바삭한 치킨으로 신나게!" }
+                            },
+                            high: {
+                                alone: { menu: "치즈볼", emoji: "🧀", reason: "짭짤한 치즈볼로 신나게!" },
+                                friend: { menu: "감자튀김", emoji: "🍟", reason: "바삭하고 짭짤한 감자튀김!" },
+                                family: { menu: "후라이드치킨", emoji: "🍗", reason: "바삭바삭한 치킨으로 신나게!" }
+                            }
+                        },
+                        fresh: {
+                            low: {
+                                alone: { menu: "샐러드", emoji: "🥗", reason: "가볍고 상큼하게 즐기는 야식!" },
+                                friend: { menu: "월남쌈", emoji: "🥬", reason: "신선한 야채로 즐거운 밤을!" },
+                                family: { menu: "과일", emoji: "🍎", reason: "상큼한 과일로 기분 전환!" }
+                            },
+                            medium: {
+                                alone: { menu: "월남쌈", emoji: "🥬", reason: "신선한 야채로 즐거운 밤을!" },
+                                friend: { menu: "두부김치", emoji: "🥗", reason: "담백하게 배고픔 달래기!" },
+                                family: { menu: "샐러드", emoji: "🥗", reason: "가볍게 즐기는 야식!" },
+                                lover: { menu: "샐러드", emoji: "🥗", reason: "가볍게 즐기는 야식!" }
+                            },
+                            high: {
+                                alone: { menu: "월남쌈", emoji: "🥬", reason: "신선한 야채로 즐거운 밤을!" },
+                                friend: { menu: "두부김치", emoji: "🥗", reason: "담백하게 배고픔 달래기!" },
+                                family: { menu: "샐러드", emoji: "🥗", reason: "가볍게 즐기는 야식!" },
+                                lover: { menu: "샐러드", emoji: "🥗", reason: "가볍게 즐기는 야식!" }
+                            }
+                        }
+                    }
+                }
             },
             tired: {
-                light: [
-                    { menu: "죽", emoji: "🥣", reason: "소화 잘되는 든든한 한끼로!" },
-                    { menu: "우동", emoji: "🍜", reason: "간단하게 힘나는 한끼!" }
-                ],
-                medium: [
-                    { menu: "삼계탕", emoji: "🍗", reason: "원기 회복에는 보양식이 최고죠" },
-                    { menu: "된장찌개", emoji: "🥘", reason: "피로 회복에는 따뜻한 국물이 최고!" }
-                ],
-                very: [
-                    { menu: "갈비탕", emoji: "🍖", reason: "확실한 원기 회복을 위해!" },
-                    { menu: "부대찌개", emoji: "🥘", reason: "든든하게 채워주는 한끼!" }
-                ]
+                spicy: {
+                    low: {
+                        alone: { menu: "라면", emoji: "🍜", reason: "피곤할 땐 간단하게 라면 한 그릇!" },
+                        friend: { menu: "김치찌개", emoji: "🍲", reason: "든든한 김치찌개로 피로 회복!" },
+                        family: { menu: "부대찌개", emoji: "��", reason: "가족과 함께 든든하게!" },
+                        lover: { menu: "쭈꾸미", emoji: "🦑", reason: "연인과 함께 매콤달콤하게!" }
+                    },
+                    medium: {
+                        alone: { menu: "짬뽕", emoji: "🍜", reason: "혼자 즐기는 얼큰한 국물!" },
+                        friend: { menu: "닭갈비", emoji: "🍗", reason: "친구와 함께 매콤하게!" },
+                        family: { menu: "낙곱새", emoji: "🦐", reason: "가족과 함께 얼큰하게!" },
+                        lover: { menu: "매운탕", emoji: "🐟", reason: "연인과 함께 얼큰하게!" }
+                    },
+                    high: {
+                        alone: { menu: "매운갈비찜", emoji: "🍖", reason: "혼자서 즐기는 매운 보양식!" },
+                        friend: { menu: "킹크랩찜", emoji: "🦀", reason: "친구와 함께 호화롭게!" },
+                        family: { menu: "매운갈비구이", emoji: "🥩", reason: "가족과 함께 든든하게!" },
+                        lover: { menu: "매운랍스터", emoji: "🦞", reason: "특별한 날 특별하게!" }
+                    }
+                },
+                sweet: {
+                    low: {
+                        alone: { menu: "타피오카", emoji: "🧋", reason: "달콤하게 피로 회복!" },
+                        friend: { menu: "마카롱", emoji: "🍪", reason: "친구와 함께 달달하게!" },
+                        family: { menu: "약과", emoji: "🍪", reason: "가족과 함께 전통과자!" },
+                        lover: { menu: "초코칩쿠키", emoji: "🍪", reason: "연인과 달콤하게!" }
+                    },
+                    medium: {
+                        alone: { menu: "밀크티", emoji: "🧋", reason: "달콤하게 힐링!" },
+                        friend: { menu: "카페디저트", emoji: "🧁", reason: "친구와 티타임!" },
+                        family: { menu: "빙수세트", emoji: "🍧", reason: "가족과 함께 시원달콤!" },
+                        lover: { menu: "와플세트", emoji: "🧇", reason: "연인과 달콤한 시간!" }
+                    },
+                    high: {
+                        alone: { menu: "디저트플레이트", emoji: "🍰", reason: "혼자만의 달콤한 사치!" },
+                        friend: { menu: "애프터눈티세트", emoji: "🫖", reason: "친구와 우아하게!" },
+                        family: { menu: "프리미엄빙수", emoji: "🍨", reason: "가족과 특별한 디저트!" },
+                        lover: { menu: "초콜릿폰듀", emoji: "🍫", reason: "로맨틱한 디저트!" }
+                    }
+                }
             },
             stressed: {
-                light: [
-                    { menu: "라면", emoji: "🍜", reason: "간단하게 스트레스 해소!" },
-                    { menu: "떡볶이", emoji: "🥘", reason: "가볍게 매콤달콤하게!" }
-                ],
-                medium: [
-                    { menu: "마라탕", emoji: "🥘", reason: "스트레스는 매운맛으로!" },
-                    { menu: "치킨", emoji: "🍗", reason: "치킨은 모든 걱정을 덜어줘요" }
-                ],
-                very: [
-                    { menu: "매운갈비찜", emoji: "🥩", reason: "스트레스는 확실하게 날려버리세요!" },
-                    { menu: "훠궈", emoji: "🍲", reason: "푸짐하고 매콤하게 스트레스 해소!" }
-                ]
+                spicy: {
+                    low: {
+                        alone: { menu: "불닭볶음면", emoji: "🍜", reason: "매운맛으로 스트레스 해소!" },
+                        friend: { menu: "엽떡", emoji: "🥘", reason: "친구와 함께 매워서 땀나게!" },
+                        family: { menu: "닭볶음탕", emoji: "🍗", reason: "가족과 함께 얼큰하게!" },
+                        lover: { menu: "쭈꾸미볶음", emoji: "🦑", reason: "연인과 함께 매콤달콤하게!" }
+                    },
+                    medium: {
+                        alone: { menu: "마라탕", emoji: "🥘", reason: "얼얼한 마라맛으로 스트레스 해소!" },
+                        friend: { menu: "닭발", emoji: "🍗", reason: "친구와 함께 매운맛 도전!" },
+                        family: { menu: "낙지볶음", emoji: "🦑", reason: "가족과 함께 매콤하게!" },
+                        lover: { menu: "매운갈비찜", emoji: "��", reason: "연인과 함께 매운맛 정복!" }
+                    },
+                    high: {
+                        alone: { menu: "매운양갈비", emoji: "🥩", reason: "혼자만의 매운 호사!" },
+                        friend: { menu: "매운대게찜", emoji: "��", reason: "친구와 함께 매운맛 파티!" },
+                        family: { menu: "매운킹크랩", emoji: "🦞", reason: "가족과 함께 고급진 매운맛!" },
+                        lover: { menu: "매운랍스터", emoji: "🦞", reason: "연인과 함께 특별한 매운맛!" }
+                    }
+                },
+                sweet: {
+                    low: {
+                        alone: { menu: "초코우유", emoji: "🥛", reason: "달콤하게 기분 전환!" },
+                        friend: { menu: "츄러스", emoji: "🥨", reason: "친구와 달달하게!" },
+                        family: { menu: "찹쌀도넛", emoji: "🍩", reason: "가족과 함께 달콤하게!" },
+                        lover: { menu: "마카롱", emoji: "🍪", reason: "연인과 달콤하게!" }
+                    },
+                    medium: {
+                        alone: { menu: "망고빙수", emoji: "🥭", reason: "시원달콤하게 힐링!" },
+                        friend: { menu: "초코퐁듀", emoji: "🍫", reason: "친구와 달콤하게 수다!" },
+                        family: { menu: "아이스크림케이크", emoji: "🍨", reason: "가족과 달콤하게!" },
+                        lover: { menu: "티라미수", emoji: "🍰", reason: "연인과 달콤한 시간!" }
+                    },
+                    high: {
+                        alone: { menu: "프리미엄디저트", emoji: "🧁", reason: "나를 위한 달콤한 선물!" },
+                        friend: { menu: "디저트뷔페", emoji: "🍰", reason: "친구와 달콤한 파티!" },
+                        family: { menu: "과일플래터", emoji: "🍎", reason: "가족과 함께 건강하게!" },
+                        lover: { menu: "초콜릿세트", emoji: "🍫", reason: "연인과 로맨틱하게!" }
+                    }
+                },
+                salty: {
+                    low: {
+                        alone: { menu: "보쌈", emoji: "🥬", reason: "야식은 역시 보쌈이죠!" },
+                        friend: { menu: "족발", emoji: "🍖", reason: "든든한 족발로 배고픔 해결!" },
+                        family: { menu: "후라이드치킨", emoji: "🍗", reason: "바삭바삭한 치킨으로 배고픔 해결!" }
+                    },
+                    medium: {
+                        alone: { menu: "보쌈", emoji: "🥬", reason: "야식은 역시 보쌈이죠!" },
+                        friend: { menu: "족발", emoji: "🍖", reason: "든든한 족발로 배고픔 해결!" },
+                        family: { menu: "후라이드치킨", emoji: "🍗", reason: "바삭바삭한 치킨으로 배고픔 해결!" }
+                    },
+                    high: {
+                        alone: { menu: "보쌈", emoji: "🥬", reason: "야식은 역시 보쌈이죠!" },
+                        friend: { menu: "족발", emoji: "🍖", reason: "든든한 족발로 배고픔 해결!" },
+                        family: { menu: "후라이드치킨", emoji: "🍗", reason: "바삭바삭한 치킨으로 배고픔 해결!" }
+                    }
+                },
+                fresh: {
+                    low: {
+                        alone: { menu: "월남쌈", emoji: "🥬", reason: "신선하게 즐기는 야식!" },
+                        friend: { menu: "두부김치", emoji: "🥗", reason: "담백하게 배고픔 달래기!" },
+                        family: { menu: "샐러드", emoji: "🥗", reason: "가볍게 즐기는 야식!" },
+                        lover: { menu: "샐러드", emoji: "🥗", reason: "가볍게 즐기는 야식!" }
+                    },
+                    medium: {
+                        alone: { menu: "월남쌈", emoji: "🥬", reason: "신선한 야채로 즐거운 밤을!" },
+                        friend: { menu: "두부김치", emoji: "🥗", reason: "담백하게 배고픔 달래기!" },
+                        family: { menu: "샐러드", emoji: "🥗", reason: "가볍게 즐기는 야식!" },
+                        lover: { menu: "샐러드", emoji: "🥗", reason: "가볍게 즐기는 야식!" }
+                    },
+                    high: {
+                        alone: { menu: "월남쌈", emoji: "🥬", reason: "신선한 야채로 즐거운 밤을!" },
+                        friend: { menu: "두부김치", emoji: "🥗", reason: "담백하게 배고픔 달래기!" },
+                        family: { menu: "샐러드", emoji: "🥗", reason: "가볍게 즐기는 야식!" },
+                        lover: { menu: "샐러드", emoji: "🥗", reason: "가볍게 즐기는 야식!" }
+                    }
+                }
+            },
+            hungry: {
+                spicy: {
+                    low: {
+                        alone: { menu: "부대찌개", emoji: "🥘", reason: "배고픈 밤엔 얼큰한 부대찌개!" },
+                        friend: { menu: "짬뽕", emoji: "🍜", reason: "배고픈 밤엔 얼큰한 짬뽕!" },
+                        family: { menu: "매운치킨", emoji: "🍗", reason: "배고플 땐 매운 치킨이죠!" }
+                    },
+                    medium: {
+                        alone: { menu: "매운치킨", emoji: "🍗", reason: "배고플 땐 매운 치킨이죠!" },
+                        friend: { menu: "양념치킨", emoji: "🍗", reason: "달달한 치킨으로 배고픔 해결!" },
+                        family: { menu: "매운치킨", emoji: "🍗", reason: "배고플 땐 매운 치킨이죠!" },
+                        lover: { menu: "양념치킨", emoji: "🍗", reason: "달달한 치킨으로 배고픔 해결!" }
+                    },
+                    high: {
+                        alone: { menu: "매운치킨", emoji: "🍗", reason: "배고플 땐 매운 치킨이죠!" },
+                        friend: { menu: "양념치킨", emoji: "🍗", reason: "달달한 치킨으로 배고픔 해결!" },
+                        family: { menu: "매운치킨", emoji: "🍗", reason: "배고플 땐 매운 치킨이죠!" },
+                        lover: { menu: "양념치킨", emoji: "🍗", reason: "달달한 치킨으로 배고픔 해결!" }
+                    }
+                },
+                sweet: {
+                    low: {
+                        alone: { menu: "피자", emoji: "🍕", reason: "배고플 땐 피자가 최고!" },
+                        friend: { menu: "치즈볶이", emoji: "🧀", reason: "달달하고 든든하게!" },
+                        family: { menu: "허니콤보", emoji: "🍗", reason: "달달한 치킨으로 배고픔 해결!" },
+                        lover: { menu: "치즈볶이", emoji: "🧀", reason: "달달하고 든든하게!" }
+                    },
+                    medium: {
+                        alone: { menu: "허니콤보", emoji: "🍗", reason: "달콤한 치킨 혼닭!" },
+                        friend: { menu: "빙수", emoji: "🍧", reason: "친구와 함께 달콤하게!" },
+                        family: { menu: "팥빙수", emoji: "🍨", reason: "가족과 함께 즐기는 달콤함!" },
+                        lover: { menu: "케이크", emoji: "🎂", reason: "연인과 달콤한 케이크!" }
+                    },
+                    high: {
+                        alone: { menu: "허니브레드", emoji: "🍯", reason: "혼자 즐기는 달콤한 사치!" },
+                        friend: { menu: "디저트세트", emoji: "🧁", reason: "친구와 함께 달콤한 파티!" },
+                        family: { menu: "팥빙수세트", emoji: "🍨", reason: "가족과 함께 특별한 디저트!" },
+                        lover: { menu: "디저트플래터", emoji: "🍰", reason: "연인과 로맨틱한 디저트!" }
+                    }
+                },
+                salty: {
+                    low: {
+                        alone: { menu: "보쌈", emoji: "🥬", reason: "야식은 역시 보쌈이죠!" },
+                        friend: { menu: "족발", emoji: "🍖", reason: "든든한 족발로 배고픔 해결!" },
+                        family: { menu: "후라이드치킨", emoji: "🍗", reason: "바삭바삭한 치킨으로 배고픔 해결!" }
+                    },
+                    medium: {
+                        alone: { menu: "보쌈", emoji: "🥬", reason: "야식은 역시 보쌈이죠!" },
+                        friend: { menu: "족발", emoji: "🍖", reason: "든든한 족발로 배고픔 해결!" },
+                        family: { menu: "후라이드치킨", emoji: "🍗", reason: "바삭바삭한 치킨으로 배고픔 해결!" }
+                    },
+                    high: {
+                        alone: { menu: "보쌈", emoji: "🥬", reason: "야식은 역시 보쌈이죠!" },
+                        friend: { menu: "족발", emoji: "🍖", reason: "든든한 족발로 배고픔 해결!" },
+                        family: { menu: "후라이드치킨", emoji: "🍗", reason: "바삭바삭한 치킨으로 배고픔 해결!" }
+                    }
+                },
+                fresh: {
+                    low: {
+                        alone: { menu: "월남쌈", emoji: "🥬", reason: "신선하게 즐기는 야식!" },
+                        friend: { menu: "두부김치", emoji: "🥗", reason: "담백하게 배고픔 달래기!" },
+                        family: { menu: "샐러드", emoji: "🥗", reason: "가볍게 즐기는 야식!" },
+                        lover: { menu: "샐러드", emoji: "🥗", reason: "가볍게 즐기는 야식!" }
+                    },
+                    medium: {
+                        alone: { menu: "월남쌈", emoji: "🥬", reason: "신선한 야채로 즐거운 밤을!" },
+                        friend: { menu: "두부김치", emoji: "🥗", reason: "담백하게 배고픔 달래기!" },
+                        family: { menu: "샐러드", emoji: "🥗", reason: "가볍게 즐기는 야식!" },
+                        lover: { menu: "샐러드", emoji: "🥗", reason: "가볍게 즐기는 야식!" }
+                    },
+                    high: {
+                        alone: { menu: "월남쌈", emoji: "🥬", reason: "신선한 야채로 즐거운 밤을!" },
+                        friend: { menu: "두부김치", emoji: "🥗", reason: "담백하게 배고픔 달래기!" },
+                        family: { menu: "샐러드", emoji: "🥗", reason: "가볍게 즐기는 야식!" },
+                        lover: { menu: "샐러드", emoji: "🥗", reason: "가볍게 즐기는 야식!" }
+                    }
+                }
             }
         };
 
+        const foodPrices = {
+            // 1만원 이하 메뉴
+            "라면": "low",
+            "김밥": "low",
+            "떡볶이": "low",
+            "순대": "low",
+            "컵밥": "low",
+            "샌드위치": "low",
+            "달고나라떼": "low",
+            "과일": "low",
+            "치즈볼": "low",
+            "감자튀김": "low",
+            "허니브레드": "low",
+            "두부김치": "low",
+            "콘샐러드": "low",
+            
+            // 3만원 이하 메뉴
+            "짜장면": "medium",
+            "김치찌개": "medium",
+            "부대찌개": "medium",
+            "치즈볶이": "medium",
+            "월남쌈": "medium",
+            "마라탕": "medium",
+            "짬뽕": "medium",
+            "떡케이크": "medium",
+            "허니콤보": "medium",
+            "샐러드": "medium",
+            
+            // 3만원 이상 메뉴
+            "매운치킨": "high",
+            "양념치킨": "high",
+            "후라이드치킨": "high",
+            "피자": "high",
+            "족발": "high",
+            "보쌈": "high",
+            "매운족발": "high",
+            "닭발": "high",
+            "마라샹궈": "high",
+            "꿔바로우": "high",
+            
+            // 누락된 메뉴 추가
+            "치즈볶이": "medium",
+            "마라샹궈": "high",
+            "순대튀김": "low",
+            "라볶이": "low",
+            "김치전": "low"
+        };
+
         let selectedMood = null;
-        let selectedHunger = null;
+        let selectedLastFood = null;
+        let selectedBudget = null;
+        let selectedWith = null;
 
         function startRecommendation() {
             document.getElementById('questionContainer').style.display = 'block';
-            document.getElementById('result').textContent = '당신을 위한 완벽한 점심 메뉴를 추천해드립니다!';
-            document.getElementById('emoji').textContent = '🍽️';
+            document.getElementById('result').textContent = '당신을 위한 완벽한 야식 메뉴를 추천해드립니다!';
+            document.getElementById('emoji').textContent = '🌙';
             selectedMood = null;
-            selectedHunger = null;
+            selectedLastFood = null;
+            selectedBudget = null;
+            selectedWith = null;
             document.querySelectorAll('.mood-btn').forEach(btn => btn.classList.remove('selected'));
         }
 
@@ -161,35 +541,441 @@
             event.target.classList.add('selected');
         }
 
-        function selectHunger(hunger) {
-            selectedHunger = hunger;
-            document.querySelectorAll('#hungerButtons .mood-btn').forEach(btn => btn.classList.remove('selected'));
+        function selectLastFood(food) {
+            selectedLastFood = food;
+            document.querySelectorAll('#lastFoodButtons .mood-btn').forEach(btn => btn.classList.remove('selected'));
             event.target.classList.add('selected');
         }
 
+        function selectBudget(budget) {
+            selectedBudget = budget;
+            document.querySelectorAll('#budgetButtons .mood-btn').forEach(btn => btn.classList.remove('selected'));
+            event.target.classList.add('selected');
+        }
+
+        function selectWith(with_whom) {
+            selectedWith = with_whom;
+            document.querySelectorAll('#withButtons .mood-btn').forEach(btn => btn.classList.remove('selected'));
+            event.target.classList.add('selected');
+        }
+
+        const recommendations = {
+            // 신나는 상태 (48가지)
+            happy: {
+                // 매운맛 (12가지)
+                spicy: {
+                    low: {
+                        alone: { menu: "컵라면", emoji: "🍜", reason: "혼자서 즐기는 매콤한 야식!" },
+                        friend: { menu: "떡볶이", emoji: "🥘", reason: "친구와 함께 매콤달콤하게!" },
+                        family: { menu: "부대찌개", emoji: "🍲", reason: "가족과 함께 얼큰하게!" },
+                        lover: { menu: "쭈꾸미", emoji: "🦑", reason: "연인과 함께 매콤달콤하게!" }
+                    },
+                    medium: {
+                        alone: { menu: "짬뽕", emoji: "🍜", reason: "혼자서 즐기는 얼큰한 국물!" },
+                        friend: { menu: "닭갈비", emoji: "🍗", reason: "친구와 함께 매콤하게!" },
+                        family: { menu: "낙곱새", emoji: "🦐", reason: "가족과 함께 얼큰하게!" },
+                        lover: { menu: "매운탕", emoji: "🐟", reason: "연인과 함께 얼큰하게!" }
+                    },
+                    high: {
+                        alone: { menu: "매운갈비찜", emoji: "🍖", reason: "혼자서 즐기는 매운 보양식!" },
+                        friend: { menu: "킹크랩찜", emoji: "🦀", reason: "친구와 함께 호화롭게!" },
+                        family: { menu: "매운갈비구이", emoji: "🥩", reason: "가족과 함께 든든하게!" },
+                        lover: { menu: "매운랍스터", emoji: "🦞", reason: "특별한 날 특별하게!" }
+                    }
+                },
+                // 달달한맛 (12가지)
+                sweet: {
+                    low: {
+                        alone: { menu: "달고나라떼", emoji: "☕", reason: "혼자 즐기는 달콤한 시간!" },
+                        friend: { menu: "붕어빵", emoji: "🐟", reason: "친구와 함께 달달하게!" },
+                        family: { menu: "호떡", emoji: "🥞", reason: "가족과 함께 달콤하게!" },
+                        lover: { menu: "와플", emoji: "🧇", reason: "연인과 달콤한 디저트!" }
+                    },
+                    medium: {
+                        alone: { menu: "허니콤보", emoji: "🍗", reason: "달콤한 치킨 혼닭!" },
+                        friend: { menu: "빙수", emoji: "🍧", reason: "친구와 함께 달콤하게!" },
+                        family: { menu: "팥빙수", emoji: "🍨", reason: "가족과 함께 즐기는 달콤함!" },
+                        lover: { menu: "케이크", emoji: "🎂", reason: "연인과 달콤한 케이크!" }
+                    },
+                    high: {
+                        alone: { menu: "허니브레드세트", emoji: "🍯", reason: "혼자 즐기는 달콤한 사치!" },
+                        friend: { menu: "디저트세트", emoji: "🧁", reason: "친구와 함께 달콤한 파티!" },
+                        family: { menu: "과일플래터", emoji: "🍓", reason: "가족과 함께 프리미엄 디저트!" },
+                        lover: { menu: "초콜릿플래터", emoji: "🍫", reason: "연인과 로맨틱한 디저트!" }
+                    }
+                },
+                // 짭짤한맛 (12가지)
+                salty: {
+                    low: {
+                        alone: { menu: "김밥", emoji: "🍙", reason: "혼자서 즐기는 간단한 야식!" },
+                        friend: { menu: "감자튀김", emoji: "🍟", reason: "친구와 함께 바삭하게!" },
+                        family: { menu: "순대", emoji: "🥘", reason: "가족과 함께 즐기는 간식!" },
+                        lover: { menu: "치즈볼", emoji: "🧀", reason: "연인과 함께 나누는 야식!" }
+                    },
+                    medium: {
+                        alone: { menu: "족발", emoji: "🍖", reason: "혼자서 즐기는 푸짐한 야식!" },
+                        friend: { menu: "치킨", emoji: "🍗", reason: "친구와 함께 치맥!" },
+                        family: { menu: "보쌈", emoji: "🥬", reason: "가족과 함께 즐기는 야식!" },
+                        lover: { menu: "치즈닭갈비", emoji: "🧀", reason: "연인과 함께 즐기는 야식!" }
+                    },
+                    high: {
+                        alone: { menu: "한우구이", emoji: "🥩", reason: "혼자서 즐기는 특별한 야식!" },
+                        friend: { menu: "곱창세트", emoji: "🥘", reason: "친구와 함께 호화롭게!" },
+                        family: { menu: "삼겹살세트", emoji: "🥓", reason: "가족과 함께 풍성하게!" },
+                        lover: { menu: "스테이크", emoji: "🥩", reason: "연인과 로맨틱한 야식!" }
+                    }
+                },
+                // 담백한맛 (12가지)
+                fresh: {
+                    low: {
+                        alone: { menu: "샐러드", emoji: "🥗", reason: "혼자서 즐기는 가벼운 야식!" },
+                        friend: { menu: "샌드위치", emoji: "🥪", reason: "친구와 함께 가볍게!" },
+                        family: { menu: "유부초밥", emoji: "🍱", reason: "가족과 함께 담백하게!" },
+                        lover: { menu: "월남쌈", emoji: "🥬", reason: "연인과 함께 건강하게!" }
+                    },
+                    medium: {
+                        alone: { menu: "두부김치", emoji: "🥗", reason: "혼자서 즐기는 담백한 야식!" },
+                        friend: { menu: "쌈밥세트", emoji: "🥬", reason: "친구와 함께 건강하게!" },
+                        family: { menu: "잔치국수", emoji: "🍜", reason: "가족과 함께 담백하게!" },
+                        lover: { menu: "샤브샤브", emoji: "🥘", reason: "연인과 함께 즐기는 야식!" }
+                    },
+                    high: {
+                        alone: { menu: "회덮밥", emoji: "🐟", reason: "혼자서 즐기는 프리미엄 야식!" },
+                        friend: { menu: "초밥세트", emoji: "🍣", reason: "친구와 함께 특별하게!" },
+                        family: { menu: "한정식", emoji: "🍱", reason: "가족과 함께 고급지게!" },
+                        lover: { menu: "생선구이세트", emoji: "🐟", reason: "연인과 함께 건강하게!" }
+                    }
+                }
+            },
+            // 피곤한 상태 (48가지)
+            tired: {
+                // 매운맛 (12가지)
+                spicy: {
+                    low: {
+                        alone: { menu: "라면", emoji: "🍜", reason: "피곤할 땐 간단하게 라면 한 그릇!" },
+                        friend: { menu: "떡볶이컵", emoji: "🥘", reason: "친구와 간단하게 매콤하게!" },
+                        family: { menu: "김치찌개", emoji: "🍲", reason: "가족과 함께 얼큰하게!" },
+                        lover: { menu: "쏨탐", emoji: "🥗", reason: "연인과 함께 이국적으로!" }
+                    },
+                    medium: {
+                        alone: { menu: "마라탕", emoji: "🥘", reason: "혼자 즐기는 얼큰한 국물!" },
+                        friend: { menu: "닭볶음탕", emoji: "🍗", reason: "친구와 함께 스태미나 충전!" },
+                        family: { menu: "알탕", emoji: "🥘", reason: "가족과 함께 원기회복!" },
+                        lover: { menu: "매운갈비찜", emoji: "🍖", reason: "연인과 함께 스태미나 충전!" }
+                    },
+                    high: {
+                        alone: { menu: "매운대게찜", emoji: "🦀", reason: "혼자서 즐기는 매운 보양식!" },
+                        friend: { menu: "매운양갈비", emoji: "🥩", reason: "친구와 함께 스태미나 보충!" },
+                        family: { menu: "매운전복찜", emoji: "🦪", reason: "가족과 함께 원기회복!" },
+                        lover: { menu: "매운소갈비", emoji: "🥩", reason: "연인과 함께 특별한 보양식!" }
+                    }
+                },
+                // 달달한맛 (12가지)
+                sweet: {
+                    low: {
+                        alone: { menu: "초코우유", emoji: "🥛", reason: "달콤하게 피로회복!" },
+                        friend: { menu: "핫초코", emoji: "☕", reason: "친구와 달달하게 수다!" },
+                        family: { menu: "약과", emoji: "🥮", reason: "가족과 함께 전통간식!" },
+                        lover: { menu: "마카롱", emoji: "🍪", reason: "연인과 달콤하게!" }
+                    },
+                    medium: {
+                        alone: { menu: "허니브레드", emoji: "🍯", reason: "달콤하게 기분전환!" },
+                        friend: { menu: "빙수", emoji: "🍧", reason: "친구와 함께 달콤하게!" },
+                        family: { menu: "과일화채", emoji: "🍎", reason: "가족과 함께 상큼달콤!" },
+                        lover: { menu: "베리타르트", emoji: "🥧", reason: "연인과 달콤한 시간!" }
+                    },
+                    high: {
+                        alone: { menu: "몽블랑", emoji: "🧁", reason: "혼자만의 달콤한 사치!" },
+                        friend: { menu: "디저트뷔페", emoji: "🍰", reason: "친구와 달콤한 파티!" },
+                        family: { menu: "과일플래터", emoji: "🍓", reason: "가족과 함께 프리미엄 디저트!" },
+                        lover: { menu: "초코퐁듀", emoji: "🍫", reason: "연인과 로맨틱하게!" }
+                    }
+                },
+                // 짭짤한맛 (12가지)
+                salty: {
+                    low: {
+                        alone: { menu: "컵라면", emoji: "🍜", reason: "간단하게 짭짤하게!" },
+                        friend: { menu: "어묵탕", emoji: "🍢", reason: "친구와 함께 담백하게!" },
+                        family: { menu: "김치볶음밥", emoji: "🍚", reason: "가족과 함께 간단하게!" },
+                        lover: { menu: "주먹밥", emoji: "🍙", reason: "연인과 함께 소소하게!" }
+                    },
+                    medium: {
+                        alone: { menu: "짜장면", emoji: "🥡", reason: "혼자 즐기는 클래식!" },
+                        friend: { menu: "닭강정", emoji: "🍗", reason: "친구와 함께 바삭하게!" },
+                        family: { menu: "돈까스", emoji: "🍖", reason: "가족과 함께 고소하게!" },
+                        lover: { menu: "쉬림프롤", emoji: "🦐", reason: "연인과 함께 특별하게!" }
+                    },
+                    high: {
+                        alone: { menu: "랍스터구이", emoji: "🦞", reason: "혼자만의 특별식!" },
+                        friend: { menu: "양갈비", emoji: "🥩", reason: "친구와 함께 풍성하게!" },
+                        family: { menu: "스테이크", emoji: "🥩", reason: "가족과 함께 고급지게!" },
+                        lover: { menu: "킹크랩", emoji: "🦀", reason: "연인과 호화롭게!" }
+                    }
+                },
+                // 담백한맛 (12가지)
+                fresh: {
+                    low: {
+                        alone: { menu: "두부김치", emoji: "🥗", reason: "간단하게 담백하게!" },
+                        friend: { menu: "콘샐러드", emoji: "🥗", reason: "친구와 가볍게!" },
+                        family: { menu: "오니기리", emoji: "🍙", reason: "가족과 함께 담백하게!" },
+                        lover: { menu: "샌드위치", emoji: "🥪", reason: "연인과 가볍게!" }
+                    },
+                    medium: {
+                        alone: { menu: "냉면", emoji: "🍜", reason: "혼자 즐기는 깔끔한 맛!" },
+                        friend: { menu: "쌈밥", emoji: "🥬", reason: "친구와 건강하게!" },
+                        family: { menu: "칼국수", emoji: "🍜", reason: "가족과 함께 정성스럽게!" },
+                        lover: { menu: "월남쌈", emoji: "��", reason: "연인과 함께 상큼하게!" }
+                    },
+                    high: {
+                        alone: { menu: "한우육회", emoji: "🥩", reason: "혼자서 즐기는 프리미엄!" },
+                        friend: { menu: "방어회", emoji: "🐟", reason: "친구와 함께 신선하게!" },
+                        family: { menu: "한정식", emoji: "��", reason: "가족과 함께 품격있게!" },
+                        lover: { menu: "오마카세", emoji: "🍣", reason: "연인과 특별한 만찬!" }
+                    }
+                }
+            },
+            // 스트레스 받은 상태 (48가지)
+            stressed: {
+                spicy: {
+                    low: {
+                        alone: { menu: "불닭볶음면", emoji: "🍜", reason: "매운맛으로 스트레스 해소!" },
+                        friend: { menu: "엽떡", emoji: "🥘", reason: "친구와 함께 매워서 땀나게!" },
+                        family: { menu: "닭볶음탕", emoji: "🍗", reason: "가족과 함께 얼큰하게!" },
+                        lover: { menu: "쭈꾸미볶음", emoji: "🦑", reason: "연인과 함께 매콤달콤하게!" }
+                    },
+                    medium: {
+                        alone: { menu: "마라탕", emoji: "🥘", reason: "얼얼한 마라맛으로 스트레스 해소!" },
+                        friend: { menu: "닭발", emoji: "🍗", reason: "친구와 함께 매운맛 도전!" },
+                        family: { menu: "낙지볶음", emoji: "🦑", reason: "가족과 함께 매콤하게!" },
+                        lover: { menu: "매운갈비찜", emoji: "��", reason: "연인과 함께 매운맛 정복!" }
+                    },
+                    high: {
+                        alone: { menu: "매운양갈비", emoji: "🥩", reason: "혼자만의 매운 호사!" },
+                        friend: { menu: "매운대게찜", emoji: "��", reason: "친구와 함께 매운맛 파티!" },
+                        family: { menu: "매운킹크랩", emoji: "🦞", reason: "가족과 함께 고급진 매운맛!" },
+                        lover: { menu: "매운랍스터", emoji: "🦞", reason: "연인과 함께 특별한 매운맛!" }
+                    }
+                },
+                sweet: {
+                    low: {
+                        alone: { menu: "초코우유", emoji: "🥛", reason: "달콤하게 기분 전환!" },
+                        friend: { menu: "츄러스", emoji: "🥨", reason: "친구와 달달하게!" },
+                        family: { menu: "찹쌀도넛", emoji: "🍩", reason: "가족과 함께 달콤하게!" },
+                        lover: { menu: "마카롱", emoji: "🍪", reason: "연인과 달콤하게!" }
+                    },
+                    medium: {
+                        alone: { menu: "망고빙수", emoji: "🥭", reason: "시원달콤하게 힐링!" },
+                        friend: { menu: "초코퐁듀", emoji: "🍫", reason: "친구와 달콤하게 수다!" },
+                        family: { menu: "아이스크림케이크", emoji: "🍨", reason: "가족과 달콤하게!" },
+                        lover: { menu: "티라미수", emoji: "🍰", reason: "연인과 달콤한 시간!" }
+                    },
+                    high: {
+                        alone: { menu: "프리미엄디저트", emoji: "🧁", reason: "나를 위한 달콤한 선물!" },
+                        friend: { menu: "디저트뷔페", emoji: "🍰", reason: "친구와 달콤한 파티!" },
+                        family: { menu: "과일플래터", emoji: "🍎", reason: "가족과 함께 건강하게!" },
+                        lover: { menu: "초콜릿세트", emoji: "🍫", reason: "연인과 로맨틱하게!" }
+                    }
+                },
+                salty: {
+                    low: {
+                        alone: { menu: "보쌈", emoji: "🥬", reason: "야식은 역시 보쌈이죠!" },
+                        friend: { menu: "족발", emoji: "🍖", reason: "든든한 족발로 배고픔 해결!" },
+                        family: { menu: "후라이드치킨", emoji: "🍗", reason: "바삭바삭한 치킨으로 배고픔 해결!" }
+                    },
+                    medium: {
+                        alone: { menu: "보쌈", emoji: "🥬", reason: "야식은 역시 보쌈이죠!" },
+                        friend: { menu: "족발", emoji: "🍖", reason: "든든한 족발로 배고픔 해결!" },
+                        family: { menu: "후라이드치킨", emoji: "🍗", reason: "바삭바삭한 치킨으로 배고픔 해결!" }
+                    },
+                    high: {
+                        alone: { menu: "보쌈", emoji: "🥬", reason: "야식은 역시 보쌈이죠!" },
+                        friend: { menu: "족발", emoji: "🍖", reason: "든든한 족발로 배고픔 해결!" },
+                        family: { menu: "후라이드치킨", emoji: "🍗", reason: "바삭바삭한 치킨으로 배고픔 해결!" }
+                    }
+                },
+                fresh: {
+                    low: {
+                        alone: { menu: "월남쌈", emoji: "🥬", reason: "신선하게 즐기는 야식!" },
+                        friend: { menu: "두부김치", emoji: "🥗", reason: "담백하게 배고픔 달래기!" },
+                        family: { menu: "샐러드", emoji: "🥗", reason: "가볍게 즐기는 야식!" },
+                        lover: { menu: "샐러드", emoji: "🥗", reason: "가볍게 즐기는 야식!" }
+                    },
+                    medium: {
+                        alone: { menu: "월남쌈", emoji: "🥬", reason: "신선한 야채로 즐거운 밤을!" },
+                        friend: { menu: "두부김치", emoji: "🥗", reason: "담백하게 배고픔 달래기!" },
+                        family: { menu: "샐러드", emoji: "🥗", reason: "가볍게 즐기는 야식!" },
+                        lover: { menu: "샐러드", emoji: "🥗", reason: "가볍게 즐기는 야식!" }
+                    },
+                    high: {
+                        alone: { menu: "월남쌈", emoji: "🥬", reason: "신선한 야채로 즐거운 밤을!" },
+                        friend: { menu: "두부김치", emoji: "🥗", reason: "담백하게 배고픔 달래기!" },
+                        family: { menu: "샐러드", emoji: "🥗", reason: "가볍게 즐기는 야식!" },
+                        lover: { menu: "샐러드", emoji: "🥗", reason: "가볍게 즐기는 야식!" }
+                    }
+                }
+            },
+            hungry: {
+                spicy: {
+                    low: {
+                        alone: { menu: "부대찌개", emoji: "🥘", reason: "배고픈 밤엔 얼큰한 부대찌개!" },
+                        friend: { menu: "짬뽕", emoji: "🍜", reason: "배고픈 밤엔 얼큰한 짬뽕!" },
+                        family: { menu: "매운치킨", emoji: "🍗", reason: "배고플 땐 매운 치킨이죠!" }
+                    },
+                    medium: {
+                        alone: { menu: "매운치킨", emoji: "🍗", reason: "배고플 땐 매운 치킨이죠!" },
+                        friend: { menu: "양념치킨", emoji: "🍗", reason: "달달한 치킨으로 배고픔 해결!" },
+                        family: { menu: "매운치킨", emoji: "🍗", reason: "배고플 땐 매운 치킨이죠!" },
+                        lover: { menu: "양념치킨", emoji: "🍗", reason: "달달한 치킨으로 배고픔 해결!" }
+                    },
+                    high: {
+                        alone: { menu: "매운치킨", emoji: "🍗", reason: "배고플 땐 매운 치킨이죠!" },
+                        friend: { menu: "양념치킨", emoji: "🍗", reason: "달달한 치킨으로 배고픔 해결!" },
+                        family: { menu: "매운치킨", emoji: "🍗", reason: "배고플 땐 매운 치킨이죠!" },
+                        lover: { menu: "양념치킨", emoji: "🍗", reason: "달달한 치킨으로 배고픔 해결!" }
+                    }
+                },
+                sweet: {
+                    low: {
+                        alone: { menu: "피자", emoji: "🍕", reason: "배고플 땐 피자가 최고!" },
+                        friend: { menu: "치즈볶이", emoji: "🧀", reason: "달달하고 든든하게!" },
+                        family: { menu: "허니콤보", emoji: "🍗", reason: "달달한 치킨으로 배고픔 해결!" },
+                        lover: { menu: "치즈볶이", emoji: "🧀", reason: "달달하고 든든하게!" }
+                    },
+                    medium: {
+                        alone: { menu: "허니콤보", emoji: "🍗", reason: "달콤한 치킨 혼닭!" },
+                        friend: { menu: "빙수", emoji: "🍧", reason: "친구와 함께 달콤하게!" },
+                        family: { menu: "팥빙수", emoji: "🍨", reason: "가족과 함께 즐기는 달콤함!" },
+                        lover: { menu: "케이크", emoji: "🎂", reason: "연인과 달콤한 케이크!" }
+                    },
+                    high: {
+                        alone: { menu: "허니브레드", emoji: "🍯", reason: "혼자 즐기는 달콤한 사치!" },
+                        friend: { menu: "디저트세트", emoji: "🧁", reason: "친구와 함께 달콤한 파티!" },
+                        family: { menu: "팥빙수세트", emoji: "🍨", reason: "가족과 함께 특별한 디저트!" },
+                        lover: { menu: "디저트플래터", emoji: "🍰", reason: "연인과 로맨틱한 디저트!" }
+                    }
+                },
+                salty: {
+                    low: {
+                        alone: { menu: "보쌈", emoji: "🥬", reason: "야식은 역시 보쌈이죠!" },
+                        friend: { menu: "족발", emoji: "🍖", reason: "든든한 족발로 배고픔 해결!" },
+                        family: { menu: "후라이드치킨", emoji: "🍗", reason: "바삭바삭한 치킨으로 배고픔 해결!" }
+                    },
+                    medium: {
+                        alone: { menu: "보쌈", emoji: "🥬", reason: "야식은 역시 보쌈이죠!" },
+                        friend: { menu: "족발", emoji: "🍖", reason: "든든한 족발로 배고픔 해결!" },
+                        family: { menu: "후라이드치킨", emoji: "🍗", reason: "바삭바삭한 치킨으로 배고픔 해결!" }
+                    },
+                    high: {
+                        alone: { menu: "보쌈", emoji: "🥬", reason: "야식은 역시 보쌈이죠!" },
+                        friend: { menu: "족발", emoji: "🍖", reason: "든든한 족발로 배고픔 해결!" },
+                        family: { menu: "후라이드치킨", emoji: "🍗", reason: "바삭바삭한 치킨으로 배고픔 해결!" }
+                    }
+                },
+                fresh: {
+                    low: {
+                        alone: { menu: "월남쌈", emoji: "🥬", reason: "신선하게 즐기는 야식!" },
+                        friend: { menu: "두부김치", emoji: "🥗", reason: "담백하게 배고픔 달래기!" },
+                        family: { menu: "샐러드", emoji: "🥗", reason: "가볍게 즐기는 야식!" },
+                        lover: { menu: "샐러드", emoji: "🥗", reason: "가볍게 즐기는 야식!" }
+                    },
+                    medium: {
+                        alone: { menu: "월남쌈", emoji: "🥬", reason: "신선한 야채로 즐거운 밤을!" },
+                        friend: { menu: "두부김치", emoji: "🥗", reason: "담백하게 배고픔 달래기!" },
+                        family: { menu: "샐러드", emoji: "🥗", reason: "가볍게 즐기는 야식!" },
+                        lover: { menu: "샐러드", emoji: "🥗", reason: "가볍게 즐기는 야식!" }
+                    },
+                    high: {
+                        alone: { menu: "월남쌈", emoji: "🥬", reason: "신선한 야채로 즐거운 밤을!" },
+                        friend: { menu: "두부김치", emoji: "🥗", reason: "담백하게 배고픔 달래기!" },
+                        family: { menu: "샐러드", emoji: "🥗", reason: "가볍게 즐기는 야식!" },
+                        lover: { menu: "샐러드", emoji: "🥗", reason: "가볍게 즐기는 야식!" }
+                    }
+                }
+            }
+        };
+
         function getRecommendation() {
-            if (!selectedMood || !selectedHunger) {
-                alert('기분과 배고픔 정도를 모두 선택해주세요!');
+            if (!selectedMood || !selectedLastFood || !selectedBudget || !selectedWith) {
+                alert('모든 항목을 선택해주세요!');
                 return;
             }
 
-            const moodFoods = foods[selectedMood][selectedHunger];
-            const recommendation = moodFoods[Math.floor(Math.random() * moodFoods.length)];
-
+            const recommendation = recommendations[selectedMood][selectedLastFood][selectedBudget][selectedWith];
             document.getElementById('emoji').textContent = recommendation.emoji;
             document.getElementById('result').innerHTML = 
                 `오늘의 추천 메뉴는 <b>${recommendation.menu}</b>입니다!<br>
                 <small>${recommendation.reason}</small>`;
             
             document.getElementById('questionContainer').style.display = 'none';
+            document.querySelector('.button-container').innerHTML = `
+                <button onclick="resetQuestions()">다시 입력하기</button>
+                <button onclick="shareOnTwitter()">X에서 공유하기</button>
+            `;
+        }
+
+        // 다시 입력하기를 위한 새로운 함수
+        function resetQuestions() {
+            // 모든 선택 초기화
+            selectedMood = null;
+            selectedLastFood = null;
+            selectedBudget = null;
+            selectedWith = null;
+            
+            // 모든 버튼의 선택 상태 제거
+            document.querySelectorAll('.mood-btn').forEach(btn => btn.classList.remove('selected'));
+            
+            // 질문 컨테이너 다시 표시
+            document.getElementById('questionContainer').style.display = 'block';
+            
+            // 결과 텍스트 초기화
+            document.getElementById('result').textContent = '당신을 위한 완벽한 야식 메뉴를 추천해드립니다!';
+            document.getElementById('emoji').textContent = '🌙';
+            
+            // 버튼 컨테이너 원래대로 복구
+            document.querySelector('.button-container').innerHTML = `
+                <button onclick="getRecommendation()">추천 받기</button>
+                <button onclick="shareOnTwitter()">X에서 공유하기</button>
+            `;
         }
 
         function shareOnTwitter() {
             const emoji = document.getElementById('emoji').textContent;
-            const result = document.getElementById('result').textContent;
-            const tweetText = encodeURIComponent(`${emoji} 오늘의 점심 메뉴: ${result}\n#점심추천 #오늘뭐먹지`);
+            const menu = document.getElementById('result').querySelector('b').textContent;
+            const reason = document.getElementById('result').querySelector('small').textContent;
+            
+            let moodEmoji = '';
+            switch(selectedMood) {
+                case 'happy': moodEmoji = '🤩'; break;
+                case 'tired': moodEmoji = '😪'; break;
+                case 'stressed': moodEmoji = '😫'; break;
+                case 'hungry': moodEmoji = '🤤'; break;
+            }
+
+            let withEmoji = '';
+            switch(selectedWith) {
+                case 'alone': withEmoji = '🧑'; break;
+                case 'friend': withEmoji = '👥'; break;
+                case 'family': withEmoji = '👨‍👩‍👧‍👦'; break;
+                case 'lover': withEmoji = '💑'; break;
+            }
+
+            const tweetText = encodeURIComponent(
+                `[오늘의 야식 메뉴]\n` +
+                `${moodEmoji} 기분: ${selectedMood}\n` +
+                `${withEmoji} 함께: ${selectedWith}\n` +
+                `${emoji} 추천: ${menu}\n` +
+                `💭 ${reason}\n\n` +
+                `#오늘뭐먹지 #야식추천\n` +
+                `https://krrrrrg.github.io/game/`
+            );
+            
             const twitterUrl = `https://twitter.com/intent/tweet?text=${tweetText}`;
             window.open(twitterUrl, '_blank');
+        }
+
+        // 페이지 로드 시 자동으로 실행
+        window.onload = function() {
+            document.getElementById('questionContainer').style.display = 'block';
         }
     </script>
 </body>
